@@ -83,10 +83,13 @@ onMounted(async () => {
     return
   }
   allWeeks.value = getAllWeeksInSection(currentSection)
-  if (allWeeks.value.length > 0) {
-    // allWeeks is sorted by weekNumber, so the first and last weeks are the first and last elements
-    firstWeek.value = allWeeks.value[0]
-    lastWeek.value = allWeeks.value[allWeeks.value.length - 1]
+  // allWeeks is sorted by weekNumber, so the first and last weeks are the first and last elements.
+  // Both are undefined only when allWeeks is empty; the check lets the compiler see that.
+  const first = allWeeks.value[0]
+  const last = allWeeks.value[allWeeks.value.length - 1]
+  if (first && last) {
+    firstWeek.value = first
+    lastWeek.value = last
   }
 
   // By default, select start and end to the current week

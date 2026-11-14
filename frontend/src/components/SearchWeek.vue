@@ -88,10 +88,13 @@ onMounted(async () => {
   // Get all weeks in the current section
   allWeeks.value = getAllWeeksInSection(currentSection)
 
-  if (allWeeks.value.length > 0) {
-    // allWeeks is sorted by weekNumber, so the first and last weeks are the first and last elements
-    firstWeek.value = allWeeks.value[0]
-    lastWeek.value = allWeeks.value[allWeeks.value.length - 1]
+  // allWeeks is sorted by weekNumber, so the first and last weeks are the first and last elements.
+  // Both are undefined only when allWeeks is empty; the check lets the compiler see that.
+  const first = allWeeks.value[0]
+  const last = allWeeks.value[allWeeks.value.length - 1]
+  if (first && last) {
+    firstWeek.value = first
+    lastWeek.value = last
   }
 })
 
@@ -134,16 +137,21 @@ const findWeekIndex = () => {
 
 const goToPreviousWeek = () => {
   const index = findWeekIndex()
-  if (index > 0) {
-    selectedWeekNumber.value = allWeeks.value[index - 1].weekNumber
+  // index - 1 is in range exactly when index > 0
+  const previousWeek = index > 0 ? allWeeks.value[index - 1] : undefined
+  if (previousWeek) {
+    selectedWeekNumber.value = previousWeek.weekNumber
     emit('search')
   }
 }
 
 const goToNextWeek = () => {
   const index = findWeekIndex()
-  if (index >= 0 && index < allWeeks.value.length - 1) {
-    selectedWeekNumber.value = allWeeks.value[index + 1].weekNumber
+  // index + 1 is in range exactly when 0 <= index < length - 1
+  const nextWeek =
+    index >= 0 && index < allWeeks.value.length - 1 ? allWeeks.value[index + 1] : undefined
+  if (nextWeek) {
+    selectedWeekNumber.value = nextWeek.weekNumber
     emit('search')
   }
 }
